@@ -47,7 +47,7 @@ VALUES (
         'Admin',
         'System',
         'admin@stc.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+        '$2b$10$s9kLVR2sS/0dJ0/BGl00POLNDrXXWEdpctAU0OfPT3TOgtPLZdCzG',
         '2025-01-01',
         'ACTIF'
     ),
@@ -56,7 +56,7 @@ VALUES (
         'Benali',
         'Ahmed',
         'prof@stc.com',
-        '$2a$10$xn3LI/AjqicFYZFruSwve.681477XaVNaUQbr1gioaWPn4t1KsnmG',
+        '$2b$10$yt6mHcSlzkbb3OP2t7H7e.9HNm9lEws/uXLmBJqwVBc0y27/auhLW',
         '2025-01-01',
         'ACTIF'
     ),
@@ -65,7 +65,7 @@ VALUES (
         'Mansouri',
         'Sara',
         'etudiant1@stc.com',
-        '$2a$10$ByIUiNaRfBKSV6urZoBBxe4UbJ/sS6u1ZaPORHlMJVJq7iRnSPzra',
+        '$2b$10$oeXijElWRpLNPXfpWvt1nuWFSJydDo.KHa1ttX/vQ4SJ3oS0eG4G2',
         '2025-01-15',
         'ACTIF'
     ),
@@ -74,7 +74,7 @@ VALUES (
         'Tazi',
         'Youssef',
         'etudiant2@stc.com',
-        '$2a$10$ByIUiNaRfBKSV6urZoBBxe4UbJ/sS6u1ZaPORHlMJVJq7iRnSPzra',
+        '$2b$10$oeXijElWRpLNPXfpWvt1nuWFSJydDo.KHa1ttX/vQ4SJ3oS0eG4G2',
         '2025-01-15',
         'ACTIF'
     ),
@@ -83,7 +83,7 @@ VALUES (
         'Alaoui',
         'Fatima',
         'directeur@stc.com',
-        '$2a$10$EqKcp1WFKAr1GOsQUEAqruTVjRKFrM2qraaRIWBqJFcn/ccxnWy5i',
+        '$2b$10$XYudMpdBiEsbOgDnP88Jf.YttHse.FxhP/O9vZkWM4rnFCkFcRkde',
         '2025-01-01',
         'ACTIF'
     );
@@ -279,7 +279,7 @@ VALUES (
         NOW(),
         true,
         '1.0.0',
-        'AA:BB:CC:DD:01:01',
+        'SIM-AA:BB:CC:DD:EE:01',
         1
     ),
     (
@@ -289,7 +289,7 @@ VALUES (
         NOW(),
         true,
         '1.0.0',
-        'AA:BB:CC:DD:01:02',
+        'SIM-AA:BB:CC:DD:EE:02',
         1
     ),
     (
@@ -299,7 +299,7 @@ VALUES (
         NOW(),
         true,
         '1.0.0',
-        'AA:BB:CC:DD:01:03',
+        'SIM-AA:BB:CC:DD:EE:03',
         1
     ),
     (
@@ -309,7 +309,7 @@ VALUES (
         NOW(),
         true,
         '1.0.0',
-        'AA:BB:CC:DD:02:01',
+        'SIM-AA:BB:CC:DD:EE:04',
         2
     ),
     (
@@ -319,7 +319,7 @@ VALUES (
         NOW(),
         true,
         '1.0.0',
-        'AA:BB:CC:DD:02:02',
+        'SIM-AA:BB:CC:DD:EE:05',
         2
     ),
     (
@@ -329,7 +329,7 @@ VALUES (
         NOW(),
         true,
         '1.0.0',
-        'AA:BB:CC:DD:02:03',
+        'SIM-AA:BB:CC:DD:EE:06',
         2
     ),
     (
@@ -339,7 +339,7 @@ VALUES (
         NOW(),
         true,
         '1.0.0',
-        'AA:BB:CC:DD:03:01',
+        'SIM-AA:BB:CC:DD:EE:07',
         3
     ),
     (
@@ -349,7 +349,7 @@ VALUES (
         NOW(),
         true,
         '1.0.0',
-        'AA:BB:CC:DD:03:02',
+        'SIM-AA:BB:CC:DD:EE:08',
         3
     ),
     (
@@ -359,8 +359,28 @@ VALUES (
         NOW(),
         true,
         '1.0.0',
-        'AA:BB:CC:DD:03:03',
+        'SIM-AA:BB:CC:DD:EE:09',
         3
+    ),
+    (
+        10,
+        'RFID_READER',
+        0.0,
+        NOW(),
+        true,
+        '1.0.0',
+        'SIM-RFID-READER-01',
+        1
+    ),
+    (
+        11,
+        'RFID_READER',
+        0.0,
+        NOW(),
+        true,
+        '1.0.0',
+        'SIM-RFID-READER-02',
+        2
     );
 
 -- ------------------------------------------------------------
