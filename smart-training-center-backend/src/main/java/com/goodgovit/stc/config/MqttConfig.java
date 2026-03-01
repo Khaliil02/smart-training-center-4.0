@@ -12,7 +12,6 @@ import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannel
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageHandler;
 
 @Configuration
 public class MqttConfig {
@@ -33,7 +32,7 @@ public class MqttConfig {
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setServerURIs(new String[]{brokerUrl});
+        options.setServerURIs(new String[] { brokerUrl });
         options.setCleanSession(true);
         options.setAutomaticReconnect(true);
         options.setConnectionTimeout(30);
@@ -54,17 +53,15 @@ public class MqttConfig {
     @Bean
     public MqttPahoMessageDrivenChannelAdapter mqttInboundAdapter(
             MqttPahoClientFactory mqttClientFactory) {
-        MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter(
-                        clientId + "-inbound",
-                        mqttClientFactory,
-                        "stc/salle/+/temperature",
-                        "stc/salle/+/co2",
-                        "stc/salle/+/presence",
-                        "stc/rfid/+/scan",
-                        "stc/device/+/status",
-                        "stc/device/+/heartbeat"
-                );
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
+                clientId + "-inbound",
+                mqttClientFactory,
+                "stc/salle/+/temperature",
+                "stc/salle/+/co2",
+                "stc/salle/+/presence",
+                "stc/rfid/+/scan",
+                "stc/device/+/status",
+                "stc/device/+/heartbeat");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
@@ -79,7 +76,7 @@ public class MqttConfig {
 
     @Bean
     @ServiceActivator(inputChannel = "mqttOutputChannel")
-    public MessageHandler mqttOutboundHandler(MqttPahoClientFactory mqttClientFactory) {
+    public MqttPahoMessageHandler mqttOutboundHandler(MqttPahoClientFactory mqttClientFactory) {
         MqttPahoMessageHandler handler = new MqttPahoMessageHandler(
                 clientId + "-outbound", mqttClientFactory);
         handler.setAsync(true);

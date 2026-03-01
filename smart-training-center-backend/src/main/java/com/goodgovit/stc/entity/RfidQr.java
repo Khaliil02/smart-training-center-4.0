@@ -19,7 +19,7 @@ public class RfidQr {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(name = "code_qr", nullable = false, unique = true)
     private String codeQR;
 
     @Enumerated(EnumType.STRING)
