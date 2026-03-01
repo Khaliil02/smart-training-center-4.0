@@ -1,0 +1,42 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$stc-primary: mat.define-palette(mat.$indigo-palette, 800);
+$stc-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+$stc-warn: mat.define-palette(mat.$red-palette);
+
+$stc-theme: mat.define-light-theme((
+  color: (
+    primary: $stc-primary,
+    accent: $stc-accent,
+    warn: $stc-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+@include mat.all-component-themes($stc-theme);
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  background-color: #fafafa;
+}
+
+.alert-snackbar {
+  background-color: #d32f2f !important;
+  color: white !important;
+}
+
+.mat-mdc-snack-bar-container {
+  &.alert-snackbar {
+    --mdc-snackbar-container-color: #d32f2f;
+    --mdc-snackbar-supporting-text-color: white;
+    --mat-snack-bar-button-color: #ffcdd2;
+  }
+}

@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+nul
+
+# Environment
+.env
+.env.*
+
+# Temp files
+tmpclaude-*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+
+# Mosquitto data/logs
+mosquitto/data/
+mosquitto/log/
+
+# Angular cache
+.angular/

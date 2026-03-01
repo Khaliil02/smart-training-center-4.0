@@ -1,0 +1,36 @@
+<nav class="sidebar" [class.collapsed]="collapsed">
+  <div class="sidebar-header">
+    <img src="assets/logo.png" alt="STC" class="logo" *ngIf="!collapsed">
+    <span class="logo-text" *ngIf="!collapsed">STC 4.0</span>
+    <button class="collapse-btn" (click)="toggleCollapse.emit()">
+      <mat-icon>{{ collapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+  </div>
+
+  <mat-nav-list>
+    @for (item of navItems; track item.label) {
+      @if (isVisible(item)) {
+        @if (item.children) {
+          <a mat-list-item (click)="toggleExpand(item.label)" [matTooltip]="collapsed ? item.label : ''" matTooltipPosition="right">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle *ngIf="!collapsed">{{ item.label }}</span>
+            <mat-icon *ngIf="!collapsed" class="expand-icon">{{ expandedItem === item.label ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </a>
+          @if (expandedItem === item.label && !collapsed) {
+            @for (child of item.children; track child.label) {
+              <a mat-list-item [routerLink]="child.route" routerLinkActive="active" class="child-item">
+                <mat-icon matListItemIcon>{{ child.icon }}</mat-icon>
+                <span matListItemTitle>{{ child.label }}</span>
+              </a>
+            }
+          }
+        } @else {
+          <a mat-list-item [routerLink]="item.route" routerLinkActive="active" [matTooltip]="collapsed ? item.label : ''" matTooltipPosition="right">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle *ngIf="!collapsed">{{ item.label }}</span>
+          </a>
+        }
+      }
+    }
+  </mat-nav-list>
+</nav>

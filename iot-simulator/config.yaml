@@ -1,0 +1,95 @@
+# ──────────────────────────────────────────────────────────────
+# Smart Training Center 4.0 — IoT Simulator Configuration
+# ──────────────────────────────────────────────────────────────
+
+mqtt:
+  broker: "localhost"
+  port: 1883
+  client_id: "stc-python-simulator"
+  username: ""
+  password: ""
+
+# ── Rooms (salles) and their sensors / devices ───────────────
+salles:
+  - id: 1
+    sensors:
+      - sensorId: "TEMP-S1"
+        deviceId: "DEV-TEMP-S1"
+        type: "temperature"
+        mac: "AA:BB:CC:01:01:01"
+        firmware: "1.0.0"
+      - sensorId: "CO2-S1"
+        deviceId: "DEV-CO2-S1"
+        type: "co2"
+        mac: "AA:BB:CC:01:01:02"
+        firmware: "1.0.0"
+      - sensorId: "PRES-S1"
+        deviceId: "DEV-PRES-S1"
+        type: "presence"
+        mac: "AA:BB:CC:01:01:03"
+        firmware: "1.0.0"
+
+  - id: 2
+    sensors:
+      - sensorId: "TEMP-S2"
+        deviceId: "DEV-TEMP-S2"
+        type: "temperature"
+        mac: "AA:BB:CC:02:02:01"
+        firmware: "1.0.0"
+      - sensorId: "CO2-S2"
+        deviceId: "DEV-CO2-S2"
+        type: "co2"
+        mac: "AA:BB:CC:02:02:02"
+        firmware: "1.0.0"
+      - sensorId: "PRES-S2"
+        deviceId: "DEV-PRES-S2"
+        type: "presence"
+        mac: "AA:BB:CC:02:02:03"
+        firmware: "1.0.0"
+
+  - id: 3
+    sensors:
+      - sensorId: "TEMP-S3"
+        deviceId: "DEV-TEMP-S3"
+        type: "temperature"
+        mac: "AA:BB:CC:03:03:01"
+        firmware: "1.0.0"
+      - sensorId: "CO2-S3"
+        deviceId: "DEV-CO2-S3"
+        type: "co2"
+        mac: "AA:BB:CC:03:03:02"
+        firmware: "1.0.0"
+      - sensorId: "PRES-S3"
+        deviceId: "DEV-PRES-S3"
+        type: "presence"
+        mac: "AA:BB:CC:03:03:03"
+        firmware: "1.0.0"
+
+# ── RFID readers (one per salle) ─────────────────────────────
+rfid_readers:
+  - readerId: "RFID-R1"
+    salleId: 1
+  - readerId: "RFID-R2"
+    salleId: 2
+  - readerId: "RFID-R3"
+    salleId: 3
+
+# ── Timing intervals (seconds) ──────────────────────────────
+intervals:
+  sensor_interval_sec: 5
+  heartbeat_interval_sec: 30
+  rfid_scan_interval_sec: 10
+
+# ── Value thresholds (normal operating range) ────────────────
+thresholds:
+  temperature_normal_min: 18
+  temperature_normal_max: 26
+  co2_normal_min: 400
+  co2_normal_max: 800
+
+# ── Badge codes used for random RFID scans ───────────────────
+badges:
+  - "BADGE-001"
+  - "BADGE-002"
+  - "BADGE-003"
+  - "BADGE-004"

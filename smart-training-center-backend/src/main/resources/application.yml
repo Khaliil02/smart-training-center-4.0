@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: smart-training-center
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/stc_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+
+# JWT Configuration
+jwt:
+  secret: YourSuperSecretKeyForJWTTokenGenerationMustBeAtLeast256BitsLong!!
+  access-token-expiration: 86400000 # 24 hours in ms
+  refresh-token-expiration: 604800000 # 7 days in ms
+
+# MQTT Configuration
+mqtt:
+  broker-url: tcp://localhost:1883
+  client-id: stc-backend
+  username: ""
+  password: ""
+
+# IoT Simulator (disabled by default in base profile)
+stc:
+  iot:
+    simulator:
+      enabled: false
+    heartbeat-timeout: 60 # seconds before marking device OFFLINE
+
+# Swagger / OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.goodgovit.stc: INFO
+    org.springframework.security: INFO

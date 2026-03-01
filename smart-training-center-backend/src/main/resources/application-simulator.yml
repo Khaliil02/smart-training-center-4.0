@@ -1,0 +1,17 @@
+# Simulator profile — activates the IoT simulator
+stc:
+  iot:
+    simulator:
+      enabled: true
+      sensor-interval: 5000 # sensor data publish interval in ms
+      heartbeat-interval: 30000 # heartbeat publish interval in ms
+
+spring:
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    com.goodgovit.stc: DEBUG
+    com.goodgovit.stc.mqtt: DEBUG
+    com.goodgovit.stc.service.IoTSimulatorService: DEBUG
