@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  # ──────────────────────────────────────
+  # MySQL Database
+  # ──────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: stc-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: stc_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data_dev:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # ──────────────────────────────────────
+  # Mosquitto MQTT Broker
+  # ──────────────────────────────────────
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: stc-mosquitto-dev
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - mosquitto_data_dev:/mosquitto/data
+      - mosquitto_log_dev:/mosquitto/log
+    restart: unless-stopped
+
+  # ──────────────────────────────────────
+  # Spring Boot Backend (Development)
+  # Mount source code for live compilation
+  # ──────────────────────────────────────
+  backend:
+    build:
+      context: ./smart-training-center-backend
+      dockerfile: Dockerfile.dev
+    container_name: stc-backend-dev
+    ports:
+      - "8080:8080"
+      - "5005:5005"  # Debug port (optional)
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: simulator
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/stc_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      MQTT_BROKER_URL: tcp://mosquitto:1883
+      MQTT_USERNAME: ""
+      MQTT_PASSWORD: ""
+      # Enable hot restart
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"
+    volumes:
+      # Mount source code for live compilation
+      - ./smart-training-center-backend/src:/app/src
+      - ./smart-training-center-backend/pom.xml:/app/pom.xml
+      # Exclude target for performance
+      - /app/target
+    restart: unless-stopped
+    # Keep container running even if there are startup errors
+    command: tail -f /dev/null
+
+  # ──────────────────────────────────────
+  # Angular Frontend (Development)
+  # Run ng serve for live reload
+  # ──────────────────────────────────────
+  frontend:
+    build:
+      context: ./smart-training-center-frontend
+      dockerfile: Dockerfile.dev
+    container_name: stc-frontend-dev
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    environment:
+      # Disable browser sync (can cause issues in Docker)
+      NG_LIVERELOAD: "true"
+    volumes:
+      # Mount entire project for live reload
+      - ./smart-training-center-frontend:/app
+      # Exclude node_modules to avoid sync issues
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  mysql_data_dev:
+  mosquitto_data_dev:
+  mosquitto_log_dev:

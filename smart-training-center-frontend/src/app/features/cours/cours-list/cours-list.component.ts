@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -207,9 +207,10 @@ import { CoursDto } from '../../../core/models';
       color: #333;
       font-size: 13px;
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CoursListComponent implements OnInit {
+export class CoursListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['titre', 'filiere', 'niveau', 'enseignantNom', 'dureeEstimee', 'statut', 'nombreInscrits', 'actions'];
   dataSource = new MatTableDataSource<CoursDto>([]);
   loading = true;
@@ -221,7 +222,8 @@ export class CoursListComponent implements OnInit {
   constructor(
     private api: ApiService,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -229,19 +231,23 @@ export class CoursListComponent implements OnInit {
     this.loadCours();
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
   loadCours(): void {
     this.loading = true;
-    this.api.get<CoursDto[]>('/cours').subscribe({
-      next: (data) => {
+    this.api.get<any>('/cours', { size: 10000 }).subscribe({
+      next: (response) => {
+        const data: CoursDto[] = response.content || response;
         this.dataSource.data = data;
         this.loading = false;
-        setTimeout(() => {
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        });
+        this.cdr.markForCheck();
       },
       error: () => {
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }

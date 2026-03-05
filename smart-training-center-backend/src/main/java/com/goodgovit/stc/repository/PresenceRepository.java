@@ -9,7 +9,14 @@ import java.util.List;
 @Repository
 public interface PresenceRepository extends JpaRepository<Presence, Long> {
     List<Presence> findByEtudiantId(Long etudiantId);
+
     List<Presence> findBySalleId(Long salleId);
+
     List<Presence> findBySalleIdAndDateHeureBetween(Long salleId, LocalDateTime from, LocalDateTime to);
+
     List<Presence> findByEtudiantIdAndDateHeureBetween(Long etudiantId, LocalDateTime from, LocalDateTime to);
+
+    List<Presence> findTop20ByOrderByDateHeureDesc();
+
+    long countBySalleId(Long salleId);
 }

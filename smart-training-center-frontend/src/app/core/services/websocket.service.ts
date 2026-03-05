@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, filter, take } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AlerteDto } from '../models';
 import { EnvironnementDto } from '../models';
@@ -13,6 +13,7 @@ export class WebSocketService implements OnDestroy {
 
   private alertSubject = new Subject<AlerteDto>();
   private sensorDataSubjects = new Map<number, Subject<EnvironnementDto>>();
+  private sensorSubscriptions = new Map<number, Subscription>();
   private deviceStatusSubject = new Subject<{ deviceId: string; online: boolean }>();
 
   alerts$ = this.alertSubject.asObservable();
@@ -52,21 +53,36 @@ export class WebSocketService implements OnDestroy {
       const subject = new Subject<EnvironnementDto>();
       this.sensorDataSubjects.set(salleId, subject);
 
-      if (this.client.connected) {
+      const doSubscribe = () => {
         this.client.subscribe(`/topic/salles/${salleId}/realtime`, (message: IMessage) => {
           subject.next(JSON.parse(message.body));
         });
+      };
+
+      if (this.client.connected) {
+        doSubscribe();
       } else {
-        this.connected$.subscribe(connected => {
-          if (connected) {
-            this.client.subscribe(`/topic/salles/${salleId}/realtime`, (message: IMessage) => {
-              subject.next(JSON.parse(message.body));
-            });
-          }
-        });
+        const sub = this.connected$.pipe(
+          filter(connected => connected),
+          take(1)
+        ).subscribe(() => doSubscribe());
+        this.sensorSubscriptions.set(salleId, sub);
       }
     }
     return this.sensorDataSubjects.get(salleId)!.asObservable();
+  }
+
+  unsubscribeSalleRealtime(salleId: number): void {
+    const subject = this.sensorDataSubjects.get(salleId);
+    if (subject) {
+      subject.complete();
+      this.sensorDataSubjects.delete(salleId);
+    }
+    const sub = this.sensorSubscriptions.get(salleId);
+    if (sub) {
+      sub.unsubscribe();
+      this.sensorSubscriptions.delete(salleId);
+    }
   }
 
   private subscribeToAlerts(): void {
@@ -82,6 +98,10 @@ export class WebSocketService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.sensorSubscriptions.forEach(sub => sub.unsubscribe());
+    this.sensorDataSubjects.forEach(subject => subject.complete());
+    this.sensorDataSubjects.clear();
+    this.sensorSubscriptions.clear();
     this.disconnect();
   }
 }

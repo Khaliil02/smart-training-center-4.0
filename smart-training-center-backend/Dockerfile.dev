@@ -1,0 +1,31 @@
+# Development Dockerfile for Spring Boot
+# Supports faster rebuilds with mounted source code
+
+FROM eclipse-temurin:17-jdk-alpine
+
+WORKDIR /app
+
+# Install Maven
+RUN apk add --no-cache maven
+
+# Copy pom.xml first (cached layer)
+COPY pom.xml .
+
+# Pre-download dependencies (this layer is cached if pom.xml doesn't change)
+RUN mvn dependency:resolve
+
+# Copy source code (will be overridden by volume mount)
+COPY src ./src
+
+# Build initially
+RUN mvn clean package -DskipTests
+
+# Install Spring Boot CLI for faster restarts
+RUN apk add --no-cache curl && \
+    curl https://repo.spring.io/release/org/springframework/boot/spring-boot-cli/3.2.5/spring-boot-cli-3.2.5-bin.tar.gz | tar xz && \
+    mv spring-*/bin/spring /usr/local/bin/
+
+EXPOSE 8080 5005
+
+# Development command: Watch for changes and rebuild
+CMD mvn spring-boot:run -Dspring-boot.run.arguments="--spring.jpa.hibernate.ddl-auto=update"

@@ -10,7 +10,12 @@ import java.util.Optional;
 @Repository
 public interface CapteurIoTRepository extends JpaRepository<CapteurIoT, Long> {
     List<CapteurIoT> findBySalleId(Long salleId);
+
     List<CapteurIoT> findByType(TypeCapteur type);
+
     List<CapteurIoT> findByEstEnLigne(boolean estEnLigne);
+
     Optional<CapteurIoT> findByAdresseMac(String adresseMac);
+
+    long countByEstEnLigne(boolean estEnLigne);
 }

@@ -79,11 +79,8 @@ public class MqttMessageHandler {
             return;
         }
 
-        // Update sensor reading in DB
-        updateSensorBySensorId(data.getSensorId(), data.getValue());
-
-        // Find capteur for this salle and type for alert checking
-        CapteurIoT capteur = findCapteurBySensorId(data.getSensorId());
+        // Update sensor reading and get the entity back (avoids duplicate MAC lookup)
+        CapteurIoT capteur = updateSensorBySensorId(data.getSensorId(), data.getValue());
         Long capteurId = capteur != null ? capteur.getId() : null;
 
         // Check threshold and create alert if needed
@@ -106,9 +103,7 @@ public class MqttMessageHandler {
             return;
         }
 
-        updateSensorBySensorId(data.getSensorId(), data.getValue());
-
-        CapteurIoT capteur = findCapteurBySensorId(data.getSensorId());
+        CapteurIoT capteur = updateSensorBySensorId(data.getSensorId(), data.getValue());
         Long capteurId = capteur != null ? capteur.getId() : null;
 
         SourceDonnee source = determineSource(data.getSensorId());
@@ -153,7 +148,8 @@ public class MqttMessageHandler {
         SourceDonnee source = determineSource(data.getReaderId());
         presenceService.recordRfidScan(data.getBadgeCode(), salleId, source);
 
-        log.info("RFID scan processed: badge={}, reader={}, salle={}", data.getBadgeCode(), data.getReaderId(), salleId);
+        log.info("RFID scan processed: badge={}, reader={}, salle={}", data.getBadgeCode(), data.getReaderId(),
+                salleId);
     }
 
     private void handleDeviceStatus(String payload) throws Exception {
@@ -173,18 +169,21 @@ public class MqttMessageHandler {
 
     /**
      * Update sensor reading by sensorId (which is the MAC address of the device).
+     * Returns the updated CapteurIoT entity to avoid duplicate lookups.
      */
-    private void updateSensorBySensorId(String sensorId, float value) {
+    private CapteurIoT updateSensorBySensorId(String sensorId, float value) {
         if (sensorId != null) {
-            capteurService.updateSensorReadingByMac(sensorId, value);
+            return capteurService.updateSensorReadingByMac(sensorId, value);
         }
+        return null;
     }
 
     /**
      * Find a CapteurIoT by its sensorId (MAC address).
      */
     private CapteurIoT findCapteurBySensorId(String sensorId) {
-        if (sensorId == null) return null;
+        if (sensorId == null)
+            return null;
         return capteurRepository.findByAdresseMac(sensorId).orElse(null);
     }
 

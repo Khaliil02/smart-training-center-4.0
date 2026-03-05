@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { dashboardRedirectGuard } from './core/guards/dashboard-redirect.guard';
 
 export const routes: Routes = [
   {
@@ -17,11 +18,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', children: [
-        { path: 'pedagogique', loadComponent: () => import('./features/dashboard/pedagogique/pedagogique.component').then(m => m.PedagogiqueComponent), canActivate: [roleGuard], data: { roles: ['ENSEIGNANT', 'ADMINISTRATEUR'] } },
+        { path: 'pedagogique', loadComponent: () => import('./features/dashboard/pedagogique/pedagogique.component').then(m => m.PedagogiqueComponent), canActivate: [roleGuard], data: { roles: ['ETUDIANT', 'ENSEIGNANT', 'ADMINISTRATEUR'] } },
         { path: 'administratif', loadComponent: () => import('./features/dashboard/administratif/administratif.component').then(m => m.AdministratifComponent), canActivate: [roleGuard], data: { roles: ['ADMINISTRATEUR'] } },
         { path: 'decisionnel', loadComponent: () => import('./features/dashboard/decisionnel/decisionnel.component').then(m => m.DecisionnelComponent), canActivate: [roleGuard], data: { roles: ['RESPONSABLE_ACADEMIQUE', 'ADMINISTRATEUR'] } },
         { path: 'iot', loadComponent: () => import('./features/dashboard/iot/iot.component').then(m => m.IotComponent), canActivate: [roleGuard], data: { roles: ['ADMINISTRATEUR'] } },
-        { path: '', redirectTo: 'pedagogique', pathMatch: 'full' }
+        { path: '', canActivate: [dashboardRedirectGuard], children: [] }
       ]},
       { path: 'cours', children: [
         { path: '', loadComponent: () => import('./features/cours/cours-list/cours-list.component').then(m => m.CoursListComponent) },
@@ -64,7 +65,7 @@ export const routes: Routes = [
         { path: ':id', loadComponent: () => import('./features/devices/device-detail/device-detail.component').then(m => m.DeviceDetailComponent), canActivate: [roleGuard], data: { roles: ['ADMINISTRATEUR'] } }
       ]},
       { path: 'bulletins', loadComponent: () => import('./features/bulletins/bulletin-view/bulletin-view.component').then(m => m.BulletinViewComponent) },
-      { path: '', redirectTo: 'dashboard/pedagogique', pathMatch: 'full' }
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
   { path: '**', redirectTo: 'auth/login' }

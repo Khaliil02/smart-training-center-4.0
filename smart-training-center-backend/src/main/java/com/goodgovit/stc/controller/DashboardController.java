@@ -1,11 +1,19 @@
 package com.goodgovit.stc.controller;
 
 import com.goodgovit.stc.dto.*;
+import com.goodgovit.stc.entity.Enseignant;
+import com.goodgovit.stc.entity.Utilisateur;
+import com.goodgovit.stc.exception.ResourceNotFoundException;
+import com.goodgovit.stc.repository.EnseignantRepository;
+import com.goodgovit.stc.repository.UtilisateurRepository;
 import com.goodgovit.stc.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -13,11 +21,33 @@ import org.springframework.web.bind.annotation.*;
 public class DashboardController {
 
     private final DashboardService dashboardService;
+    private final UtilisateurRepository utilisateurRepository;
+    private final EnseignantRepository enseignantRepository;
 
     @GetMapping("/pedagogique")
     @PreAuthorize("hasAnyRole('ENSEIGNANT', 'ADMINISTRATEUR')")
-    public ResponseEntity<DashboardPedagogiqueDto> getPedagogique(@RequestParam Long enseignantId) {
-        return ResponseEntity.ok(dashboardService.getPedagogique(enseignantId));
+    public ResponseEntity<DashboardPedagogiqueDto> getPedagogique(@RequestParam String enseignantEmail) {
+        // Find user by email
+        Utilisateur utilisateur = utilisateurRepository.findByEmail(enseignantEmail)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Utilisateur non trouvé avec l'email: " + enseignantEmail));
+
+        // Find enseignant by user ID — may not exist for admin-only users
+        Optional<Enseignant> enseignantOpt = enseignantRepository.findByUtilisateurId(utilisateur.getId());
+
+        if (enseignantOpt.isEmpty()) {
+            // User is not an Enseignant (e.g. pure admin) — return empty dashboard
+            DashboardPedagogiqueDto empty = DashboardPedagogiqueDto.builder()
+                    .enseignantId(0L)
+                    .enseignantNom(utilisateur.getNom() + " " + utilisateur.getPrenom())
+                    .totalCours(0)
+                    .totalEtudiants(0)
+                    .coursStats(Collections.emptyList())
+                    .build();
+            return ResponseEntity.ok(empty);
+        }
+
+        return ResponseEntity.ok(dashboardService.getPedagogique(enseignantOpt.get().getId()));
     }
 
     @GetMapping("/administratif")

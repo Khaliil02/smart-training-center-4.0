@@ -38,7 +38,8 @@ public class CapteurService {
     @Transactional
     public CapteurIoTDto registerCapteur(CapteurIoTRequest request) {
         Salle salle = salleRepository.findById(request.getSalleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Salle non trouvée avec l'id: " + request.getSalleId()));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Salle non trouvée avec l'id: " + request.getSalleId()));
 
         CapteurIoT capteur = CapteurIoT.builder()
                 .type(TypeCapteur.valueOf(request.getType()))
@@ -54,7 +55,8 @@ public class CapteurService {
     public CapteurIoTDto updateCapteur(Long id, CapteurIoTRequest request) {
         CapteurIoT capteur = findOrThrow(id);
         Salle salle = salleRepository.findById(request.getSalleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Salle non trouvée avec l'id: " + request.getSalleId()));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Salle non trouvée avec l'id: " + request.getSalleId()));
 
         capteur.setType(TypeCapteur.valueOf(request.getType()));
         capteur.setAdresseMac(request.getAdresseMac());
@@ -74,7 +76,7 @@ public class CapteurService {
     }
 
     @Transactional
-    public void updateSensorReadingByMac(String mac, float value) {
+    public CapteurIoT updateSensorReadingByMac(String mac, float value) {
         CapteurIoT capteur = capteurRepository.findByAdresseMac(mac)
                 .orElse(null);
         if (capteur != null) {
@@ -83,6 +85,7 @@ public class CapteurService {
             capteur.setEstEnLigne(true);
             capteurRepository.save(capteur);
         }
+        return capteur;
     }
 
     @Transactional

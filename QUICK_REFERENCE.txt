@@ -1,0 +1,75 @@
+┌─────────────────────────────────────────────────────────────────┐
+│  QUICK REFERENCE - Smart Training Center 4.0 Dev Setup          │
+└─────────────────────────────────────────────────────────────────┘
+
+🚀 START DEVELOPMENT (Choose ONE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Windows:    .\dev-start.bat
+  macOS/Unix: ./dev-start.sh
+  Manual:     docker compose -f docker-compose.dev.yml up -d
+
+📋 VIEW LOGS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Backend:    docker compose -f docker-compose.dev.yml logs -f backend
+  Frontend:   docker compose -f docker-compose.dev.yml logs -f frontend
+  All:        docker compose -f docker-compose.dev.yml logs -f
+
+🔨 REBUILD (When needed)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Backend:    docker compose -f docker-compose.dev.yml exec backend \
+              mvn clean package -DskipTests
+              
+  Frontend:   docker compose -f docker-compose.dev.yml exec frontend \
+              ng build
+
+🔓 SHELL ACCESS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Backend:    docker compose -f docker-compose.dev.yml exec backend sh
+  Frontend:   docker compose -f docker-compose.dev.yml exec frontend sh
+
+⏹️  STOP SERVICES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Stop:       docker compose -f docker-compose.dev.yml down
+  Clean all:  docker compose -f docker-compose.dev.yml down -v
+
+🌐 ACCESS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Frontend:   http://localhost:4200
+  Backend:    http://localhost:8080
+  MySQL:      localhost:3306
+  MQTT:       localhost:1883
+
+⏱️  AUTO-RELOAD TIMES (No full rebuilds!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Frontend code change   → ~500ms (ng serve hot reload)
+  Backend code change    → ~5-10 seconds (auto-compile)
+  
+  OLD METHOD (full rebuild) → 3-5 minutes ❌
+  NEW METHOD (live reload)   → <10 seconds ✅
+
+📚 HELPER SCRIPTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PowerShell (Windows):
+    .\docker-helpers.ps1 -Command start
+    .\docker-helpers.ps1 -Command logs-backend
+    .\docker-helpers.ps1 -Command help
+
+❓ NEED HELP?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Read:  DEV_SETUP_COMPLETE.md   (Quick overview)
+  Read:  DOCKER_DEV_GUIDE.md     (Comprehensive guide)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        NO MORE FULL REBUILDS - JUST EDIT AND RELOAD! 🚀
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

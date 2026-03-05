@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,31 +31,36 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
-                .requestMatchers("/ws/**").permitAll()
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // Admin-only endpoints
-                .requestMatchers("/api/utilisateurs/**").hasRole("ADMINISTRATEUR")
-                .requestMatchers("/api/audit/**").hasAnyRole("ADMINISTRATEUR", "RESPONSABLE_ACADEMIQUE")
-                .requestMatchers("/api/iot/devices/**").hasRole("ADMINISTRATEUR")
-                .requestMatchers("/api/alertes/**").hasRole("ADMINISTRATEUR")
+                        // User self-service endpoints (must be before /api/utilisateurs/**)
+                        .requestMatchers("/api/utilisateurs/me", "/api/utilisateurs/me/**").authenticated()
 
-                // Dashboard access by role
-                .requestMatchers("/api/dashboard/administratif").hasRole("ADMINISTRATEUR")
-                .requestMatchers("/api/dashboard/pedagogique").hasAnyRole("ENSEIGNANT", "ADMINISTRATEUR")
-                .requestMatchers("/api/dashboard/decisionnel").hasAnyRole("RESPONSABLE_ACADEMIQUE", "ADMINISTRATEUR")
-                .requestMatchers("/api/dashboard/iot/**").hasRole("ADMINISTRATEUR")
+                        // Admin-only endpoints
+                        .requestMatchers("/api/utilisateurs/**").hasRole("ADMINISTRATEUR")
+                        .requestMatchers("/api/audit/**").hasAnyRole("ADMINISTRATEUR", "RESPONSABLE_ACADEMIQUE")
+                        .requestMatchers("/api/iot/devices/**").hasRole("ADMINISTRATEUR")
+                        .requestMatchers("/api/alertes/**").hasRole("ADMINISTRATEUR")
 
-                // All other endpoints require authentication
-                .anyRequest().authenticated()
-            );
+                        // Dashboard access by role
+                        .requestMatchers("/api/dashboard/administratif").hasRole("ADMINISTRATEUR")
+                        .requestMatchers("/api/dashboard/pedagogique")
+                        .hasAnyRole("ETUDIANT", "ENSEIGNANT", "ADMINISTRATEUR")
+                        .requestMatchers("/api/dashboard/decisionnel")
+                        .hasAnyRole("RESPONSABLE_ACADEMIQUE", "ADMINISTRATEUR")
+                        .requestMatchers("/api/dashboard/iot/**").hasRole("ADMINISTRATEUR")
+
+                        // All other endpoints require authentication
+                        .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

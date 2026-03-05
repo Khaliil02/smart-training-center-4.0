@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -291,9 +291,10 @@ import { AuditLog } from '../../../core/models/audit.model';
       mat-icon { font-size: 64px; width: 64px; height: 64px; margin-bottom: 16px; }
       p { font-size: 16px; }
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuditLogComponent implements OnInit {
+export class AuditLogComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['id', 'action', 'entityType', 'entityId', 'userId', 'details', 'timestamp'];
   dataSource = new MatTableDataSource<AuditLog>([]);
   allLogs: AuditLog[] = [];
@@ -307,28 +308,40 @@ export class AuditLogComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private api: ApiService) {}
+  private static readonly ACTION_CLASSES: Record<string, string> = {
+    'CREATE': 'action-create',
+    'UPDATE': 'action-update',
+    'DELETE': 'action-delete',
+    'LOGIN': 'action-login',
+    'LOGOUT': 'action-logout'
+  };
+
+  constructor(private api: ApiService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadLogs();
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
   loadLogs(): void {
     this.loading = true;
-    this.api.get<AuditLog[]>('/audit').subscribe({
-      next: (data) => {
+    this.api.get<any>('/audit', { size: 10000 }).subscribe({
+      next: (response) => {
+        const data: AuditLog[] = response.content || response;
         this.allLogs = data.sort((a, b) =>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
         this.dataSource.data = this.allLogs;
         this.loading = false;
-        setTimeout(() => {
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        });
+        this.cdr.markForCheck();
       },
       error: () => {
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -377,13 +390,6 @@ export class AuditLogComponent implements OnInit {
   }
 
   getActionClass(action: string): string {
-    const classes: Record<string, string> = {
-      'CREATE': 'action-create',
-      'UPDATE': 'action-update',
-      'DELETE': 'action-delete',
-      'LOGIN': 'action-login',
-      'LOGOUT': 'action-logout'
-    };
-    return classes[action] || 'action-default';
+    return AuditLogComponent.ACTION_CLASSES[action] || 'action-default';
   }
 }

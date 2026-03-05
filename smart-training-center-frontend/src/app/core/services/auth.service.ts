@@ -10,6 +10,7 @@ export class AuthService {
   private readonly API = environment.apiUrl + '/auth';
   private currentUserSubject = new BehaviorSubject<AuthResponse | null>(this.getStoredUser());
   currentUser$ = this.currentUserSubject.asObservable();
+  private cachedUser: AuthResponse | null | undefined = undefined;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -34,6 +35,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('stc_user');
+    this.cachedUser = undefined;
     this.currentUserSubject.next(null);
     this.router.navigate(['/auth/login']);
   }
@@ -58,7 +60,9 @@ export class AuthService {
   }
 
   hasAnyRole(roles: string[]): boolean {
-    return roles.some(role => this.hasRole(role));
+    const user = this.getStoredUser();
+    if (!user?.roles) return false;
+    return roles.some(role => user.roles.includes('ROLE_' + role));
   }
 
   getRoles(): string[] {
@@ -71,20 +75,53 @@ export class AuthService {
     return user?.email ?? null;
   }
 
+  getUserName(): string {
+    const user = this.getStoredUser();
+    if (user?.prenom && user?.nom) {
+      return `${user.prenom} ${user.nom}`;
+    }
+    return user?.email ?? '';
+  }
+
+  getUserInitials(): string {
+    const user = this.getStoredUser();
+    if (user?.prenom && user?.nom) {
+      return (user.prenom.charAt(0) + user.nom.charAt(0)).toUpperCase();
+    }
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return '?';
+  }
+
+  getPrimaryRole(): string {
+    const roles = this.getRoles();
+    if (roles.length === 0) return '';
+    return roles[0].replace('ROLE_', '');
+  }
+
   private storeUser(response: AuthResponse): void {
     localStorage.setItem('stc_user', JSON.stringify(response));
+    this.cachedUser = response;
     this.currentUserSubject.next(response);
   }
 
   private getStoredUser(): AuthResponse | null {
+    if (this.cachedUser !== undefined) {
+      return this.cachedUser;
+    }
     const stored = localStorage.getItem('stc_user');
     if (stored) {
       try {
-        return JSON.parse(stored);
+        const parsed: AuthResponse = JSON.parse(stored);
+        this.cachedUser = parsed;
+        return parsed;
       } catch {
+        this.cachedUser = null;
         return null;
       }
     }
+    this.cachedUser = null;
     return null;
   }
 }

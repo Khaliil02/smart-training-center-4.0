@@ -38,6 +38,11 @@ public class PresenceController {
         return ResponseEntity.ok(presenceService.getPresencesBySalleAndDateRange(salleId, from, to));
     }
 
+    @GetMapping("/presence/recent")
+    public ResponseEntity<List<PresenceDto>> getRecentPresences() {
+        return ResponseEntity.ok(presenceService.getRecentPresences());
+    }
+
     @GetMapping("/etudiants/{etudiantId}/presences")
     public ResponseEntity<List<PresenceDto>> getPresencesByEtudiant(@PathVariable Long etudiantId) {
         return ResponseEntity.ok(presenceService.getPresencesByEtudiant(etudiantId));

@@ -1,6 +1,6 @@
 export interface LoginRequest {
   email: string;
-  password: string;
+  motDePasse: string;
 }
 
 export interface RegisterRequest {
@@ -14,7 +14,11 @@ export interface RegisterRequest {
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
+  type: string;
+  userId: number;
   email: string;
+  nom: string;
+  prenom: string;
   roles: string[];
 }
 

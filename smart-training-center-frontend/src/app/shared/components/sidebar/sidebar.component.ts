@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../../core/services/auth.service';
 
 interface NavItem {
@@ -17,17 +18,21 @@ interface NavItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatListModule, MatIconModule, MatTooltipModule],
+  imports: [CommonModule, RouterModule, MatListModule, MatIconModule, MatTooltipModule, MatDividerModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   @Input() collapsed = false;
   @Output() toggleCollapse = new EventEmitter<void>();
 
-  constructor(private authService: AuthService) {}
+  userName = '';
+  userInitials = '';
+  userRole = '';
 
-  navItems: NavItem[] = [
+  constructor(public authService: AuthService) {}
+
+  private allNavItems: NavItem[] = [
     { label: 'Tableau de bord', icon: 'dashboard', route: '/dashboard', roles: ['ENSEIGNANT', 'ADMINISTRATEUR', 'RESPONSABLE_ACADEMIQUE'] },
     { label: 'Cours', icon: 'school', route: '/cours' },
     { label: 'Evaluations', icon: 'quiz', route: '/evaluations' },
@@ -46,6 +51,15 @@ export class SidebarComponent {
     { label: 'Audit', icon: 'history', route: '/audit', roles: ['ADMINISTRATEUR'] }
   ];
 
+  navItems: NavItem[] = [];
+
+  ngOnInit(): void {
+    this.navItems = this.allNavItems.filter(item => this.isVisible(item));
+    this.userName = this.authService.getUserName();
+    this.userInitials = this.authService.getUserInitials();
+    this.userRole = this.authService.getPrimaryRole();
+  }
+
   isVisible(item: NavItem): boolean {
     if (!item.roles || item.roles.length === 0) return true;
     return item.roles.some(role => this.authService.hasRole(role));
@@ -55,5 +69,9 @@ export class SidebarComponent {
 
   toggleExpand(label: string): void {
     this.expandedItem = this.expandedItem === label ? null : label;
+  }
+
+  onLogout(): void {
+    this.authService.logout();
   }
 }

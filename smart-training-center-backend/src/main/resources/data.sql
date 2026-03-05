@@ -688,3 +688,556 @@ VALUES (
         'Certification Amazon Web Services Cloud Practitioner',
         '2028-01-31'
     );
+
+-- ------------------------------------------------------------
+-- 20. InscriptionCours (Student Course Enrollments)
+-- ------------------------------------------------------------
+INSERT IGNORE INTO
+    inscriptions_cours (
+        id,
+        date_inscription,
+        progression,
+        note_finale,
+        etat,
+        date_dernier_acces,
+        etudiant_id,
+        cours_id
+    )
+VALUES (
+        1,
+        '2025-01-20',
+        85.0,
+        15.5,
+        'EN_COURS',
+        '2025-03-01 10:30:00',
+        1,
+        1
+    ),
+    (
+        2,
+        '2025-01-20',
+        60.0,
+        12.0,
+        'EN_COURS',
+        '2025-02-28 14:00:00',
+        1,
+        2
+    ),
+    (
+        3,
+        '2025-01-22',
+        100.0,
+        18.0,
+        'TERMINE',
+        '2025-02-25 09:00:00',
+        1,
+        3
+    ),
+    (
+        4,
+        '2025-02-01',
+        45.0,
+        0.0,
+        'EN_COURS',
+        '2025-03-01 16:45:00',
+        1,
+        5
+    ),
+    (
+        5,
+        '2025-01-20',
+        70.0,
+        14.0,
+        'EN_COURS',
+        '2025-03-02 11:00:00',
+        2,
+        1
+    ),
+    (
+        6,
+        '2025-01-22',
+        95.0,
+        17.5,
+        'TERMINE',
+        '2025-02-27 13:30:00',
+        2,
+        2
+    ),
+    (
+        7,
+        '2025-02-01',
+        30.0,
+        0.0,
+        'EN_COURS',
+        '2025-03-01 08:15:00',
+        2,
+        3
+    ),
+    (
+        8,
+        '2025-02-05',
+        0.0,
+        0.0,
+        'ABANDONNE',
+        NULL,
+        2,
+        5
+    );
+
+-- ------------------------------------------------------------
+-- 21. Presence Records
+-- ------------------------------------------------------------
+INSERT IGNORE INTO
+    presences (
+        id,
+        date_heure,
+        methode,
+        source,
+        etudiant_id,
+        salle_id
+    )
+VALUES (
+        1,
+        '2025-03-01 08:00:00',
+        'RFID',
+        'HARDWARE',
+        1,
+        1
+    ),
+    (
+        2,
+        '2025-03-01 08:02:00',
+        'RFID',
+        'HARDWARE',
+        2,
+        1
+    ),
+    (
+        3,
+        '2025-03-01 10:00:00',
+        'QR',
+        'WEB',
+        1,
+        2
+    ),
+    (
+        4,
+        '2025-03-01 10:05:00',
+        'RFID',
+        'HARDWARE',
+        2,
+        2
+    ),
+    (
+        5,
+        '2025-03-01 14:00:00',
+        'RFID',
+        'HARDWARE',
+        1,
+        3
+    ),
+    (
+        6,
+        '2025-03-01 14:01:00',
+        'QR',
+        'WEB',
+        2,
+        3
+    ),
+    (
+        7,
+        '2025-03-02 08:00:00',
+        'RFID',
+        'HARDWARE',
+        1,
+        1
+    ),
+    (
+        8,
+        '2025-03-02 08:03:00',
+        'RFID',
+        'HARDWARE',
+        2,
+        1
+    ),
+    (
+        9,
+        '2025-03-02 10:00:00',
+        'QR',
+        'WEB',
+        1,
+        2
+    ),
+    (
+        10,
+        '2025-03-02 10:01:00',
+        'RFID',
+        'HARDWARE',
+        2,
+        2
+    ),
+    (
+        11,
+        '2025-03-02 14:00:00',
+        'RFID',
+        'HARDWARE',
+        1,
+        3
+    ),
+    (
+        12,
+        '2025-03-02 14:02:00',
+        'QR',
+        'WEB',
+        2,
+        3
+    ),
+    (
+        13,
+        '2025-03-03 08:00:00',
+        'RFID',
+        'HARDWARE',
+        1,
+        1
+    ),
+    (
+        14,
+        '2025-03-03 08:05:00',
+        'QR',
+        'WEB',
+        2,
+        1
+    ),
+    (
+        15,
+        '2025-03-03 10:00:00',
+        'RFID',
+        'HARDWARE',
+        1,
+        2
+    ),
+    (
+        16,
+        '2025-03-03 10:02:00',
+        'RFID',
+        'HARDWARE',
+        2,
+        2
+    ),
+    (
+        17,
+        '2025-03-03 14:00:00',
+        'QR',
+        'WEB',
+        1,
+        3
+    ),
+    (
+        18,
+        '2025-03-03 14:03:00',
+        'RFID',
+        'HARDWARE',
+        2,
+        3
+    ),
+    (
+        19,
+        '2025-02-28 08:00:00',
+        'RFID',
+        'HARDWARE',
+        1,
+        1
+    ),
+    (
+        20,
+        '2025-02-28 08:01:00',
+        'RFID',
+        'HARDWARE',
+        2,
+        1
+    );
+
+-- ------------------------------------------------------------
+-- 22. AuditLog Entries
+-- ------------------------------------------------------------
+INSERT IGNORE INTO
+    audit_logs (
+        id,
+        action,
+        entity_type,
+        entity_id,
+        user_id,
+        timestamp,
+        details
+    )
+VALUES (
+        1,
+        'LOGIN',
+        'User',
+        1,
+        1,
+        '2025-03-01 07:30:00',
+        'Connexion administrateur'
+    ),
+    (
+        2,
+        'LOGIN',
+        'User',
+        2,
+        2,
+        '2025-03-01 07:45:00',
+        'Connexion enseignant'
+    ),
+    (
+        3,
+        'LOGIN',
+        'User',
+        3,
+        3,
+        '2025-03-01 07:50:00',
+        'Connexion etudiant Mansouri Sara'
+    ),
+    (
+        4,
+        'CREATE',
+        'Cours',
+        1,
+        2,
+        '2025-01-20 09:00:00',
+        'Creation du cours: Introduction a Java'
+    ),
+    (
+        5,
+        'CREATE',
+        'Cours',
+        2,
+        2,
+        '2025-01-20 09:30:00',
+        'Creation du cours: Base de Donnees Relationnelles'
+    ),
+    (
+        6,
+        'CREATE',
+        'Cours',
+        3,
+        2,
+        '2025-01-22 10:00:00',
+        'Creation du cours: Reseaux et Protocoles'
+    ),
+    (
+        7,
+        'UPDATE',
+        'Cours',
+        1,
+        2,
+        '2025-02-15 11:00:00',
+        'Mise a jour du contenu du cours Java'
+    ),
+    (
+        8,
+        'CREATE',
+        'Evaluation',
+        1,
+        2,
+        '2025-02-20 14:00:00',
+        'Creation du quiz: Quiz Java - Chapitre 1'
+    ),
+    (
+        9,
+        'CREATE',
+        'Evaluation',
+        3,
+        2,
+        '2025-02-22 10:00:00',
+        'Creation du TP: BDD Relationnelles'
+    ),
+    (
+        10,
+        'CREATE',
+        'Presence',
+        1,
+        1,
+        '2025-03-01 08:00:00',
+        'Scan RFID: Mansouri Sara en Salle A101'
+    ),
+    (
+        11,
+        'CREATE',
+        'Presence',
+        2,
+        1,
+        '2025-03-01 08:02:00',
+        'Scan RFID: Tazi Youssef en Salle A101'
+    ),
+    (
+        12,
+        'DELETE',
+        'User',
+        NULL,
+        1,
+        '2025-02-10 16:00:00',
+        'Suppression d un compte test'
+    ),
+    (
+        13,
+        'UPDATE',
+        'User',
+        3,
+        1,
+        '2025-02-12 09:00:00',
+        'Mise a jour du profil etudiant'
+    ),
+    (
+        14,
+        'LOGIN',
+        'User',
+        4,
+        4,
+        '2025-03-02 08:00:00',
+        'Connexion etudiant Tazi Youssef'
+    ),
+    (
+        15,
+        'LOGIN',
+        'User',
+        5,
+        5,
+        '2025-03-02 09:00:00',
+        'Connexion responsable academique'
+    );
+
+-- ------------------------------------------------------------
+-- 23. Alerte Records
+-- ------------------------------------------------------------
+INSERT IGNORE INTO
+    alertes (
+        id,
+        type,
+        message,
+        date_heure,
+        statut,
+        source,
+        salle_id,
+        capteur_id
+    )
+VALUES (
+        1,
+        'TEMPERATURE_ELEVEE',
+        'Temperature elevee detectee en Salle A101: 32.5 C',
+        '2025-03-01 11:30:00',
+        'ACTIVE',
+        'SIMULATOR',
+        1,
+        1
+    ),
+    (
+        2,
+        'CO2_ELEVE',
+        'Niveau CO2 eleve en Labo B201: 1200 ppm',
+        '2025-03-01 14:15:00',
+        'TRAITEE',
+        'SIMULATOR',
+        2,
+        5
+    ),
+    (
+        3,
+        'DEVICE_OFFLINE',
+        'Capteur temperature Amphi C301 hors ligne',
+        '2025-03-02 06:00:00',
+        'ACTIVE',
+        'HARDWARE',
+        3,
+        7
+    ),
+    (
+        4,
+        'PRESENCE_ANORMALE',
+        'Presence detectee en Salle A101 hors horaires',
+        '2025-03-02 22:30:00',
+        'ACTIVE',
+        'HARDWARE',
+        1,
+        3
+    ),
+    (
+        5,
+        'TEMPERATURE_ELEVEE',
+        'Temperature elevee en Labo B201: 35.0 C',
+        '2025-03-03 09:45:00',
+        'ACTIVE',
+        'SIMULATOR',
+        2,
+        4
+    ),
+    (
+        6,
+        'CO2_ELEVE',
+        'Niveau CO2 critique en Amphi C301: 1500 ppm',
+        '2025-02-28 15:00:00',
+        'TRAITEE',
+        'SIMULATOR',
+        3,
+        8
+    );
+
+-- ------------------------------------------------------------
+-- 24. DeviceHeartbeat Records
+-- ------------------------------------------------------------
+INSERT IGNORE INTO
+    device_heartbeats (
+        id,
+        device_id,
+        uptime,
+        free_memory,
+        timestamp,
+        capteur_id
+    )
+VALUES (
+        1,
+        'SIM-AA:BB:CC:DD:EE:01',
+        86400,
+        524288,
+        '2025-03-03 08:00:00',
+        1
+    ),
+    (
+        2,
+        'SIM-AA:BB:CC:DD:EE:02',
+        86400,
+        480000,
+        '2025-03-03 08:00:00',
+        2
+    ),
+    (
+        3,
+        'SIM-AA:BB:CC:DD:EE:04',
+        172800,
+        512000,
+        '2025-03-03 08:00:00',
+        4
+    ),
+    (
+        4,
+        'SIM-AA:BB:CC:DD:EE:05',
+        172800,
+        490000,
+        '2025-03-03 08:00:00',
+        5
+    ),
+    (
+        5,
+        'SIM-RFID-READER-01',
+        259200,
+        460000,
+        '2025-03-03 08:00:00',
+        10
+    ),
+    (
+        6,
+        'SIM-RFID-READER-02',
+        259200,
+        470000,
+        '2025-03-03 08:00:00',
+        11
+    );
